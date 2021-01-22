@@ -1,0 +1,66 @@
+:root {
+    background-color:steelblue;
+}
+
+#welcome_view {
+    padding-top: 100px;
+    width: 600px;
+    height: 400px;
+    margin: auto;
+}
+
+#welcome_view .welcome_view_component {
+    background-color: white;
+    box-sizing: border-box;
+    border-style: solid;
+    position: relative;
+}
+
+#logo_and_slogan {
+    float: left;
+    width: 340px;
+    height: 400px;
+}
+
+#login {
+    float: right;
+    width: 250px;
+    height: 100px;
+    padding: 2px;
+}
+
+#signup {
+    float: right;
+    width: 250px;
+    margin-top: 10px;
+    height: 290px;
+    padding: 2px;
+}
+
+#signup h2 {
+    text-align: center;
+}
+
+.welcome_view_component .welcome_view_input {
+    display: flex;
+    margin-top: 2px;
+}
+
+.welcome_view_component .welcome_view_input label {
+    flex-grow: 1;
+}
+
+.welcome_view_component .welcome_view_input input {
+    box-sizing: border-box;
+    width: 140px;
+}
+
+.welcome_view_component .welcome_view_input select {
+    width: 140px;
+}
+
+.welcome_view_button {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+}
