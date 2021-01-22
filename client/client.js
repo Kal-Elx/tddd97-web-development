@@ -3,5 +3,5 @@ displayView = function () {
 };
 
 window.onload = function () {
-    window.alert("Hello TDDD97!");
+    // window.alert("Hello TDDD97!");
 };
