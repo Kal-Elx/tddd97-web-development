@@ -8,10 +8,8 @@
     <link href="client.css" type="text/css" rel="stylesheet">
     <script src="client.js"></script>
     <script src="serverstub.js"></script>
-</head>
-
-<body>
-    <div id="welcome_view">
+    <script id="welcome_view" type="text/html"> <!-- Changed type to html to get formatting -->
+    <div id="welcome_view_body">
         <img class="welcome_view_component" id="logo_and_slogan" src="wimage.png"
             alt="Twidder - Socialize with other people around the world">
 
@@ -82,6 +80,14 @@
             </form>
         </div>
     </div>
+    </script>
+    <script id="profile_view" type="text/html">
+        <h1>Profile View</h1>
+    </script>
+</head>
+
+<body>
+    <div id="viewport"></div>
 </body>
 
 </html>

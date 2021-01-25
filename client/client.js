@@ -1,7 +1,8 @@
-displayView = function () {
-    // todo
+function displayView(signedIn) {
+    view_id = signedIn ? "profile_view" : "welcome_view";
+    document.getElementById("viewport").innerHTML = document.getElementById(view_id).innerHTML;
 };
 
 window.onload = function () {
-    // window.alert("Hello TDDD97!");
+    displayView(false);
 };
