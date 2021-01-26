@@ -1,5 +1,6 @@
 window.onload = function () {
-    displayView(false);
+    let signedIn = localStorage.getItem("token") != null;
+    displayView(signedIn);
     attachHandlers();
 };
 
@@ -22,8 +23,15 @@ function login(formData) {
 }
 
 function handle_login(email, password) {
-    console.log(email, password);
-    document.getElementById("login_form").reset();
+    let res = serverstub.signIn(email, password);
+    if (res.success) {
+        let token = res.data;
+        localStorage.setItem("token", token);
+        document.getElementById("login_form").reset();
+        displayView(true);
+    } else {
+        communicateToUser(res.message);
+    }
 }
 
 function signup(formData) {
