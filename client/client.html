@@ -14,37 +14,37 @@
             alt="Twidder - Socialize with other people around the world">
 
         <div class="welcome_view_component" id="login">
-            <form>
+            <form method="POST" action="" id="login_form" onsubmit="return false">
                 <div class="welcome_view_input">
                     <label for="login_email">Email</label>
-                    <input type="email" id="login_email" name="login_email">
+                    <input type="email" id="login_email" name="login_email" required>
                 </div>
 
                 <div class="welcome_view_input">
                     <label for="login_password">Password</label>
-                    <input type="password" id="login_password" name="login_password">
+                    <input type="password" id="login_password" name="login_password" minlength="6">
                 </div>
 
-                <input class="welcome_view_button" type="submit" value="Login">
+                <input class="welcome_view_button" type="submit" id="login_button" value="Login">
             </form>
         </div>
 
         <div class="welcome_view_component" id="signup">
             <h2>Sign up here</h2>
-            <form>
+            <form method="POST" action="" id="signup_form" onsubmit="return false">
                 <div class="welcome_view_input">
                     <label for="first_name">First name</label>
-                    <input type="text" id="first_name" name="first_name">
+                    <input type="text" id="first_name" name="first_name" required>
                 </div>
 
                 <div class="welcome_view_input">
                     <label for="family_name">Family name</label>
-                    <input type="text" id="family_name" name="family_name">
+                    <input type="text" id="family_name" name="family_name" required>
                 </div>
 
                 <div class="welcome_view_input">
                     <label for="gender">Gender</label>
-                    <select id="gender" name="gender">
+                    <select id="gender" name="gender" required>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
@@ -53,22 +53,22 @@
 
                 <div class="welcome_view_input">
                     <label for="city">City</label>
-                    <input type="text" id="city" name="city">
+                    <input type="text" id="city" name="city" required>
                 </div>
 
                 <div class="welcome_view_input">
                     <label for="country">Country</label>
-                    <input type="text" id="country" name="country">
+                    <input type="text" id="country" name="country" required>
                 </div>
 
                 <div class="welcome_view_input">
                     <label for="signup_email">Email</label>
-                    <input type="email" id="signup_email" name="signup_email">
+                    <input type="email" id="signup_email" name="signup_email" required>
                 </div>
 
                 <div class="welcome_view_input">
                     <label for="signup_password">Password</label>
-                    <input type="password" id="signup_password" name="signup_password">
+                    <input type="password" id="signup_password" name="signup_password" minlength="6" required>
                 </div>
 
                 <div class="welcome_view_input">
@@ -76,7 +76,7 @@
                     <input type="password" id="repeat_signup_password" name="repeat_signup_password">
                 </div>
 
-                <input class="welcome_view_button" type="submit" value="Login">
+                <input class="welcome_view_button" type="submit" id="signup_button" value="Sign up">
             </form>
         </div>
     </div>
