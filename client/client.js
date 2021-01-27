@@ -1,20 +1,31 @@
 window.onload = function () {
     let signedIn = localStorage.getItem("token") != null;
     displayView(signedIn);
-    attachHandlers();
 };
 
 function displayView(signedIn) {
-    let view = signedIn ? "profile_view" : "welcome_view";
-    document.getElementById("viewport").innerHTML = document.getElementById(view).innerHTML;
-};
+    if (signedIn) {
+        document.getElementById("viewport").innerHTML = document.getElementById("profile_view").innerHTML;
 
-function attachHandlers() {
-    document.getElementById("login_form")?.setAttribute("onsubmit", "login(this); return false;");
-    document.getElementById("signup_form")?.setAttribute("onsubmit", "signup(this); return false;");
-    let repeatPasswordInput = document.getElementById("repeat_signup_password");
-    if (repeatPasswordInput != null) {
-        repeatPasswordInput.oninput = function () { repeatPasswordInput.setCustomValidity(""); };
+        // Attach handlers.
+        document.getElementById("tab_bar").childNodes?.forEach(tab => tab.onclick = function () {
+            // Unselect all tabs and hide all panels.
+            Array.from(document.getElementsByClassName("tab")).forEach(t => t.classList.remove("selected"));
+            Array.from(document.getElementsByClassName("panel")).forEach(p => p.hidden = true);
+
+            // Select the clicked tab and show its panel.
+            tab.classList.add("selected");
+            let panel_id = tab.getAttribute("data-panel");
+            document.getElementById(panel_id).hidden = false;
+        });
+
+    } else {
+        document.getElementById("viewport").innerHTML = document.getElementById("welcome_view").innerHTML;
+
+        // Attach handlers.
+        document.getElementById("login_form")?.setAttribute("onsubmit", "login(this); return false;");
+        document.getElementById("signup_form")?.setAttribute("onsubmit", "signup(this); return false;");
+        document.getElementById("repeat_signup_password").oninput = function () { repeatPasswordInput.setCustomValidity(""); };
     }
 }
 

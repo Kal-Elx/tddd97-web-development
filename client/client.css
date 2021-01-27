@@ -2,6 +2,10 @@
     background-color:steelblue;
 }
 
+body {
+    margin: 0 !important;
+}
+
 #welcome_view_body {
     padding-top: 100px;
     width: 600px;
@@ -79,4 +83,27 @@
 
 #message_box.hidden_animation {
     opacity: 0;
+}
+
+#tab_bar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+#tab_bar .tab {
+    background-color: white;
+    box-sizing: border-box;
+    border-style: solid;
+    flex-grow: 1;
+    text-align: center;
+}
+
+#tab_bar .selected {
+    background-color: lightgrey;
+}
+
+#tab_bar .tab p {
+    font-size: 30px;
+    margin: 5px;
 }

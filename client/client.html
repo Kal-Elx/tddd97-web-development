@@ -85,7 +85,27 @@
     </div>
     </script>
     <script id="profile_view" type="text/html">
-        <h1>Profile View</h1>
+        <div id="tab_bar">
+            <div class="tab selected" id="home_tab" data-panel="home_panel">
+                <p>Home</p>
+            </div>
+            <div class="tab" id="browse_tab" data-panel="browse_panel">
+                <p>Browse</p>
+            </div>
+            <div class="tab" id="account_tab" data-panel="account_panel">
+                <p>Account</p>
+            </div>
+        </div>
+
+        <div class="panel" id="home_panel">
+            <h1>Home</h1>
+        </div>
+        <div class="panel" id="browse_panel" hidden>
+            <h1>Browse</h1>
+        </div>
+        <div class="panel" id="account_panel" hidden>
+            <h1>Account</h1>
+        </div>
     </script>
 </head>
 
