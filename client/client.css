@@ -13,11 +13,18 @@ body {
     margin: auto;
 }
 
-.welcome_view_component {
+#account_panel {
+    padding-top: 100px;
+    width: 300px;
+    margin: auto;
+}
+
+.component {
     background-color: white;
     box-sizing: border-box;
     border-style: solid;
     position: relative;
+    padding: 2px;
 }
 
 #logo_and_slogan {
@@ -45,21 +52,21 @@ body {
     text-align: center;
 }
 
-.welcome_view_component .welcome_view_input {
+.component .form_input {
     display: flex;
     margin-top: 2px;
 }
 
-.welcome_view_component .welcome_view_input label {
+.component .form_input label {
     flex-grow: 1;
 }
 
-.welcome_view_component .welcome_view_input input {
+.component .form_input input {
     box-sizing: border-box;
     width: 140px;
 }
 
-.welcome_view_component .welcome_view_input select {
+.component .form_input select {
     width: 140px;
 }
 
@@ -69,19 +76,22 @@ body {
     right: 2px;
 }
 
-#message_box {
+#welcome_view_message_box {
     margin-top: 10px;
     width: 600px;
     height: 55px;
     margin-left: auto;
     margin-right: auto;
-    text-align: center;
-    opacity: 1;
-    transition: opacity 1s;
-    border-radius: 20px;
 }
 
-#message_box.hidden_animation {
+.animated_message_box {
+    text-align: center;
+    border-radius: 20px;
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+.hidden_animation {
     opacity: 0;
 }
 
@@ -105,5 +115,18 @@ body {
 
 #tab_bar .tab p {
     font-size: 30px;
+    margin: 5px;
+}
+
+.panel_title {
+    text-align: center;
+}
+
+.panel div {
+    margin-bottom: 10px;
+}
+
+.component_button {
+    width: calc(100% - 10px);
     margin: 5px;
 }

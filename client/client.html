@@ -10,17 +10,17 @@
     <script src="serverstub.js"></script>
     <script id="welcome_view" type="text/html"> <!-- Changed type to html to get formatting -->
     <div id="welcome_view_body">
-        <img class="welcome_view_component" id="logo_and_slogan" src="wimage.png"
+        <img class="component" id="logo_and_slogan" src="wimage.png"
             alt="Twidder - Socialize with other people around the world">
 
-        <div class="welcome_view_component" id="login">
+        <div class="component" id="login">
             <form method="POST" action="" id="login_form" onsubmit="return false">
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="login_email">Email</label>
                     <input type="email" id="login_email" name="login_email" required>
                 </div>
 
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="login_password">Password</label>
                     <input type="password" id="login_password" name="login_password" minlength="6">
                 </div>
@@ -29,20 +29,20 @@
             </form>
         </div>
 
-        <div class="welcome_view_component" id="signup">
+        <div class="component" id="signup">
             <h2>Sign up here</h2>
             <form method="POST" action="" id="signup_form" onsubmit="return false">
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="first_name">First name</label>
                     <input type="text" id="first_name" name="first_name" required>
                 </div>
 
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="family_name">Family name</label>
                     <input type="text" id="family_name" name="family_name" required>
                 </div>
 
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="gender">Gender</label>
                     <select id="gender" name="gender" required>
                         <option value="male">Male</option>
@@ -51,27 +51,27 @@
                     </select>
                 </div>
 
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="city">City</label>
                     <input type="text" id="city" name="city" required>
                 </div>
 
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="country">Country</label>
                     <input type="text" id="country" name="country" required>
                 </div>
 
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="signup_email">Email</label>
                     <input type="email" id="signup_email" name="signup_email" required>
                 </div>
 
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="signup_password">Password</label>
                     <input type="password" id="signup_password" name="signup_password" minlength="6" required>
                 </div>
 
-                <div class="welcome_view_input">
+                <div class="form_input">
                     <label for="repeat_signup_password">Repeat PSW</label>
                     <input type="password" id="repeat_signup_password" name="repeat_signup_password">
                 </div>
@@ -80,8 +80,8 @@
             </form>
         </div>
     </div>
-    <div class="welcome_view_component hidden_animation" id="message_box">
-        <p id="message_box_text"></p>
+    <div class="component animated_message_box hidden_animation" id="welcome_view_message_box">
+        <p id="welcome_view_message_box_text"></p>
     </div>
     </script>
     <script id="profile_view" type="text/html">
@@ -104,7 +104,33 @@
             <h1>Browse</h1>
         </div>
         <div class="panel" id="account_panel" hidden>
-            <h1>Account</h1>
+            <div class="component panel_title">
+                <h1>Account</h1>
+            </div>
+            <div class="component">
+                <h3>Change password</h3>
+                <form method="POST" action="" id="change_password_form" onsubmit="return false">
+                    <div class="form_input">
+                        <label for="current_password_input">Current Password</label>
+                        <input type="password" id="current_password_input" name="current_password_input" minlength="6" required>
+                    </div>
+                    <div class="form_input">
+                        <label for="change_password_input">New Password</label>
+                        <input type="password" id="change_password_input" name="change_password_input" minlength="6" required>
+                    </div>
+                    <div class="form_input">
+                        <label for="repeat_change_password_input">Repeat Password</label>
+                        <input type="password" id="repeat_change_password_input" name="repeat_change_password_input">
+                    </div>
+                    <button class="component_button" id="change_password_button" type="submit">Change Password</button>
+                </form>
+            </div>
+            <div class="component">
+                <button class="component_button" id="sign_out_button">Sign Out</button>
+            </div>
+            <div class="component animated_message_box hidden_animation" id="account_panel_message_box">
+                <p id="account_panel_message_box_text"></p>
+            </div>
         </div>
     </script>
 </head>
