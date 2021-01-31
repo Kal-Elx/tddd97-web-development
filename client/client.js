@@ -10,32 +10,44 @@ function getToken() {
 function displayView(signedIn) {
     if (signedIn) {
         document.getElementById("viewport").innerHTML = document.getElementById("profile_view").innerHTML;
-
-        // Attach handlers.
-        document.getElementById("tab_bar").childNodes?.forEach(tab => tab.onclick = function () {
-            // Unselect all tabs and hide all panels.
-            Array.from(document.getElementsByClassName("tab")).forEach(t => t.classList.remove("selected"));
-            Array.from(document.getElementsByClassName("panel")).forEach(p => p.hidden = true);
-
-            // Select the clicked tab and show its panel.
-            tab.classList.add("selected");
-            let panel_id = tab.getAttribute("data-panel");
-            document.getElementById(panel_id).hidden = false;
-        });
-        document.getElementById("sign_out_button").onclick = signOut;
-        document.getElementById("change_password_form")?.setAttribute("onsubmit", "changePassword(this); return false;");
-        let repeatPasswordInput = document.getElementById("repeat_change_password_input");
-        repeatPasswordInput.oninput = function () { repeatPasswordInput.setCustomValidity(""); };
+        setupHomePanel();
+        setupAccountPanel();
 
     } else {
         document.getElementById("viewport").innerHTML = document.getElementById("welcome_view").innerHTML;
-
-        // Attach handlers.
-        document.getElementById("login_form")?.setAttribute("onsubmit", "login(this); return false;");
-        document.getElementById("signup_form")?.setAttribute("onsubmit", "signup(this); return false;");
-        let repeatPasswordInput = document.getElementById("repeat_signup_password");
-        repeatPasswordInput.oninput = function () { repeatPasswordInput.setCustomValidity(""); };
+        setupWelcomeView();
     }
+}
+
+function setupWelcomeView() {
+    document.getElementById("login_form")?.setAttribute("onsubmit", "login(this); return false;");
+    document.getElementById("signup_form")?.setAttribute("onsubmit", "signup(this); return false;");
+    let repeatPasswordInput = document.getElementById("repeat_signup_password");
+    repeatPasswordInput.oninput = function () { repeatPasswordInput.setCustomValidity(""); };
+}
+
+function setupHomePanel() {
+    getUserInfo();
+    document.getElementById("post_message_form")?.setAttribute("onsubmit", "postMessage(this); return false;");
+    loadMessageWall();
+    document.getElementById("message_wall_refresh_button").onclick = loadMessageWall;
+}
+
+function setupAccountPanel() {
+    document.getElementById("tab_bar").childNodes?.forEach(tab => tab.onclick = function () {
+        // Unselect all tabs and hide all panels.
+        Array.from(document.getElementsByClassName("tab")).forEach(t => t.classList.remove("selected"));
+        Array.from(document.getElementsByClassName("panel")).forEach(p => p.hidden = true);
+
+        // Select the clicked tab and show its panel.
+        tab.classList.add("selected");
+        let panel_id = tab.getAttribute("data-panel");
+        document.getElementById(panel_id).hidden = false;
+    });
+    document.getElementById("sign_out_button").onclick = signOut;
+    document.getElementById("change_password_form")?.setAttribute("onsubmit", "changePassword(this); return false;");
+    let repeatPasswordInput = document.getElementById("repeat_change_password_input");
+    repeatPasswordInput.oninput = function () { repeatPasswordInput.setCustomValidity(""); };
 }
 
 function login(formData) {
@@ -116,5 +128,40 @@ function changePassword(formData) {
             form.reset();
         }
         communicateToUser(res.message, "account_panel");
+    }
+}
+
+function getUserInfo() {
+    let res = serverstub.getUserDataByToken(getToken());
+    if (res.success) {
+        document.getElementById("info_first_name").innerText = res.data.firstname;
+        document.getElementById("info_family_name").innerText = res.data.familyname;
+        document.getElementById("info_gender").innerText = res.data.gender;
+        document.getElementById("info_country").innerText = res.data.country;
+        document.getElementById("info_city").innerText = res.data.city;
+        document.getElementById("info_email").innerText = res.data.email;
+    } else {
+        communicateToUser(res.message, "home_panel");
+    }
+}
+
+function postMessage(formData) {
+    let res = serverstub.postMessage(getToken(), formData.post_message_textarea.value, formData.to_email.value);
+    if (res.success) {
+        document.getElementById("post_message_form").reset();
+    }
+    communicateToUser(res.message, "home_panel");
+}
+
+function loadMessageWall() {
+    let res = serverstub.getUserMessagesByToken(getToken());
+
+    if (res.success) {
+        let feed = document.getElementById("message_feed");
+        let messages = "";
+        res.data.forEach((msg) => messages += `<dt>${msg.writer}</dt><dd>${msg.content}</dd>`);
+        feed.innerHTML = `<dl>${messages}</dl>`;
+    } else {
+        communicateToUser(res.message, "home_panel");
     }
 }
