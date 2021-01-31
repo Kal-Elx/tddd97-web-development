@@ -19,6 +19,12 @@ body {
     margin: auto;
 }
 
+#browse_panel {
+    padding-top: 50px;
+    width: 600px;
+    margin: auto;
+}
+
 #account_panel {
     padding-top: 50px;
     width: 300px;
@@ -58,21 +64,34 @@ body {
     text-align: center;
 }
 
-#user_info_component {
+.user_info_component {
     float: left;
     width: 295px;
-    height: 230px;
+    height: 200px;
 }
 
-#post_message_component {
+.post_message_component {
+    float: right;
+    width: 295px;
+    height: 200px;
+}
+
+.message_wall_component {
+    clear: both;
+    width: 100%;
+}
+
+#search_user_component {
+    clear: both;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#searched_user_info_component {
     float: right;
     width: 295px;
     height: 230px;
-}
-
-#message_wall_component {
-    clear: both;
-    width: 100%;
 }
 
 .component .form_input {
@@ -107,14 +126,17 @@ body {
     margin-right: auto;
 }
 
-.animated_message_box {
+.message_box {
     border-radius: 20px;
-    opacity: 1;
-    transition: opacity 1s;
 }
 
-.animated_message_box p {
+.message_box p {
     text-align: center;
+}
+
+.animated {
+    opacity: 1;
+    transition: opacity 1s;
 }
 
 .hidden_animation {
@@ -160,12 +182,12 @@ body {
     padding: 0px;
 }
 
-#message_feed {
+.message_feed {
     height: 200px;
     overflow-y: scroll;
 }
 
-#message_wall_refresh_button {
+.message_wall_refresh_button {
     position: absolute;
     right: 5px;
     top: 5px;

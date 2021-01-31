@@ -7,10 +7,15 @@ function getToken() {
     return localStorage.getItem("token");
 }
 
+function getUserEmail(panel) {
+    return document.getElementById(panel + "_info_email").textContent;
+}
+
 function displayView(signedIn) {
     if (signedIn) {
         document.getElementById("viewport").innerHTML = document.getElementById("profile_view").innerHTML;
         setupHomePanel();
+        setupBrowsePanel();
         setupAccountPanel();
 
     } else {
@@ -28,9 +33,17 @@ function setupWelcomeView() {
 
 function setupHomePanel() {
     getUserInfo();
-    document.getElementById("post_message_form")?.setAttribute("onsubmit", "postMessage(this); return false;");
-    loadMessageWall();
-    document.getElementById("message_wall_refresh_button").onclick = loadMessageWall;
+    document.getElementById("home_panel_post_message_form")?.setAttribute("onsubmit", "postMessage(this); return false;");
+    loadHomePanelMessageWall();
+    document.getElementById("home_message_wall_refresh_button").onclick = loadHomePanelMessageWall;
+}
+
+function setupBrowsePanel() {
+    document.getElementById("search_user_form")?.setAttribute("onsubmit", "searchUser(this); return false;");
+    document.getElementById("browse_panel_post_message_form")?.setAttribute("onsubmit", "postMessage(this, true); return false;");
+    document.getElementById("browse_message_wall_refresh_button").onclick = function () {
+        loadBrowsePanelMessageWall(getUserEmail("browse_panel"));
+    };
 }
 
 function setupAccountPanel() {
@@ -134,34 +147,80 @@ function changePassword(formData) {
 function getUserInfo() {
     let res = serverstub.getUserDataByToken(getToken());
     if (res.success) {
-        document.getElementById("info_first_name").innerText = res.data.firstname;
-        document.getElementById("info_family_name").innerText = res.data.familyname;
-        document.getElementById("info_gender").innerText = res.data.gender;
-        document.getElementById("info_country").innerText = res.data.country;
-        document.getElementById("info_city").innerText = res.data.city;
-        document.getElementById("info_email").innerText = res.data.email;
+        populateUserInfo(res.data, "home_panel");
     } else {
         communicateToUser(res.message, "home_panel");
     }
 }
 
-function postMessage(formData) {
-    let res = serverstub.postMessage(getToken(), formData.post_message_textarea.value, formData.to_email.value);
-    if (res.success) {
-        document.getElementById("post_message_form").reset();
-    }
-    communicateToUser(res.message, "home_panel");
+function populateUserInfo(data, panel) {
+    let prefix = panel + "_";
+    document.getElementById(`${prefix}info_first_name`).innerText = data.firstname;
+    document.getElementById(`${prefix}info_family_name`).innerText = data.familyname;
+    document.getElementById(`${prefix}info_gender`).innerText = data.gender;
+    document.getElementById(`${prefix}info_country`).innerText = data.country;
+    document.getElementById(`${prefix}info_city`).innerText = data.city;
+    document.getElementById(`${prefix}info_email`).innerText = data.email;
 }
 
-function loadMessageWall() {
+function postMessage(formData, postToFoundUser = false) {
+    let panel = postToFoundUser ? "browse_panel" : "home_panel";
+    let toEmail = getUserEmail(panel);
+    let res = serverstub.postMessage(getToken(), formData.post_message_textarea.value, toEmail);
+    console.log(res);
+    if (res.success) {
+        document.getElementById(panel + "_post_message_form").reset();
+    }
+    communicateToUser(res.message, panel);
+}
+
+function loadHomePanelMessageWall() {
     let res = serverstub.getUserMessagesByToken(getToken());
 
     if (res.success) {
-        let feed = document.getElementById("message_feed");
-        let messages = "";
-        res.data.forEach((msg) => messages += `<dt>${msg.writer}</dt><dd>${msg.content}</dd>`);
-        feed.innerHTML = `<dl>${messages}</dl>`;
+        populateMessageWall("home_panel", res.data);
     } else {
         communicateToUser(res.message, "home_panel");
+    }
+}
+
+function populateMessageWall(panel, data) {
+    let feed = document.getElementById(panel + "_message_feed");
+    let messages = "";
+    data.forEach((msg) => messages += `<dt>${msg.writer}</dt><dd>${msg.content}</dd>`);
+    feed.innerHTML = `<dl>${messages}</dl>`;
+}
+
+function searchUser(formData) {
+    let email = formData.user_email.value;
+    let res = serverstub.getUserDataByEmail(getToken(), email);
+
+    if (res.success) {
+        document.getElementById("search_user_form").reset();
+        populateUserInfo(res.data, "browse_panel");
+        loadBrowsePanelMessageWall(email);
+        toggleFoundUserInfo(true);
+    } else {
+        communicateToUser(res.message, "browse_panel");
+        toggleFoundUserInfo(false);
+    }
+}
+
+function loadBrowsePanelMessageWall(email) {
+    let res = serverstub.getUserMessagesByEmail(getToken(), email);
+
+    if (res.success) {
+        populateMessageWall("browse_panel", res.data);
+    } else {
+        communicateToUser(res.message, "browse_panel");
+    }
+}
+
+function toggleFoundUserInfo(show) {
+    let info = document.getElementById("user_info_group");
+    if (show) {
+        info.classList.remove("hidden_animation");
+    } else {
+        info.classList.add("hidden_animation");
     }
 }
