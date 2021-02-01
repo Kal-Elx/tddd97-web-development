@@ -14,7 +14,7 @@
             alt="Twidder - Socialize with other people around the world">
 
         <div class="component" id="login">
-            <form method="POST" action="" id="login_form" onsubmit="return false">
+            <form method="POST" action="#" id="login_form" onsubmit="return false">
                 <div class="form_input">
                     <label for="login_email">Email</label>
                     <input type="email" id="login_email" name="login_email" required>
@@ -31,7 +31,7 @@
 
         <div class="component" id="signup">
             <h2>Sign up here</h2>
-            <form method="POST" action="" id="signup_form" onsubmit="return false">
+            <form method="POST" action="#" id="signup_form" onsubmit="return false">
                 <div class="form_input">
                     <label for="first_name">First name</label>
                     <input type="text" id="first_name" name="first_name" required>
@@ -45,8 +45,9 @@
                 <div class="form_input">
                     <label for="gender">Gender</label>
                     <select id="gender" name="gender" required>
-                        <option value="male">Male</option>
+                        <option value="" disabled selected>Select Gender</option>
                         <option value="female">Female</option>
+                        <option value="male">Male</option>
                         <option value="other">Other</option>
                     </select>
                 </div>
@@ -85,148 +86,148 @@
     </div>
     </script>
     <script id="profile_view" type="text/html">
-        <div id="tab_bar">
-            <div class="tab selected" id="home_tab" data-panel="home_panel">
-                <p>Home</p>
-            </div>
-            <div class="tab" id="browse_tab" data-panel="browse_panel">
-                <p>Browse</p>
-            </div>
-            <div class="tab" id="account_tab" data-panel="account_panel">
-                <p>Account</p>
-            </div>
+    <div id="tab_bar">
+        <div class="tab selected" id="home_tab" data-panel="home_panel">
+            <p>Home</p>
         </div>
+        <div class="tab" id="browse_tab" data-panel="browse_panel">
+            <p>Browse</p>
+        </div>
+        <div class="tab" id="account_tab" data-panel="account_panel">
+            <p>Account</p>
+        </div>
+    </div>
 
-        <div class="panel" id="home_panel">
+    <div class="panel" id="home_panel">
+        <div class="component user_info_component">
+            <h3>Information</h3>
+            <table>
+                <tr>
+                    <td>First name</td>
+                    <td id="home_panel_info_first_name"></td>
+                </tr>
+                <tr>
+                    <td>Family name</td>
+                    <td id="home_panel_info_family_name"></td>
+                </tr>
+                <tr>
+                    <td>Gender</td>
+                    <td id="home_panel_info_gender"></td>
+                </tr>
+                <tr>
+                    <td>City</td>
+                    <td id="home_panel_info_city"></td>
+                </tr>
+                <tr>
+                    <td>Country</td>
+                    <td id="home_panel_info_country"></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td id="home_panel_info_email"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="component post_message_component">
+            <h3>Post message</h3>
+            <form method="POST" action="#" id="home_panel_post_message_form" onsubmit="return false">
+                <textarea class="multiline_input" name="post_message_textarea" rows="6" form="home_panel_post_message_form"></textarea>
+                <button class="component_button" id="post_message_button" type="submit">Post</button>
+            </form>
+        </div>
+        <div class="component message_wall_component">
+            <h3>Messages</h3>
+            <button class="message_wall_refresh_button" id="home_message_wall_refresh_button">Refresh</button>
+            <div class="message_feed" id="home_panel_message_feed"></div>
+        </div>
+        <div class="component animated message_box hidden_animation" id="home_panel_message_box">
+            <p id="home_panel_message_box_text"></p>
+        </div>
+    </div>
+    <div class="panel" id="browse_panel" hidden>
+        <div class="component" id="search_user_component">
+            <h3>Search User</h3>
+            <form method="POST" action="#" id="search_user_form" onsubmit="return false">
+                <div class="form_input">
+                    <label for="user_email">User email</label>
+                    <input type="email" id="user_email" name="user_email" required>
+                </div>
+                <button class="component_button" id="search_user_button" type="submit">Search</button>
+            </form>
+        </div>
+        <div class="component animated message_box hidden_animation" id="browse_panel_message_box">
+            <p id="browse_panel_message_box_text"></p>
+        </div>
+        <div class="animated hidden_animation" id="user_info_group">
+            <div class="component post_message_component">
+                <h3>Post message</h3>
+                <form method="POST" action="#" id="browse_panel_post_message_form" onsubmit="return false">
+                    <textarea class="multiline_input" name="post_message_textarea" rows="6" form="browse_panel_post_message_form"></textarea>
+                    <button class="component_button" id="browse_post_message_button" type="submit">Post</button>
+                </form>
+            </div>
             <div class="component user_info_component">
                 <h3>Information</h3>
                 <table>
                     <tr>
                         <td>First name</td>
-                        <td id="home_panel_info_first_name"></td>
+                        <td id="browse_panel_info_first_name"></td>
                     </tr>
                     <tr>
                         <td>Family name</td>
-                        <td id="home_panel_info_family_name"></td>
+                        <td id="browse_panel_info_family_name"></td>
                     </tr>
                     <tr>
                         <td>Gender</td>
-                        <td id="home_panel_info_gender"></td>
+                        <td id="browse_panel_info_gender"></td>
                     </tr>
                     <tr>
                         <td>City</td>
-                        <td id="home_panel_info_city"></td>
+                        <td id="browse_panel_info_city"></td>
                     </tr>
                     <tr>
                         <td>Country</td>
-                        <td id="home_panel_info_country"></td>
+                        <td id="browse_panel_info_country"></td>
                     </tr>
                     <tr>
                         <td>Email</td>
-                        <td id="home_panel_info_email"></td>
+                        <td id="browse_panel_info_email"></td>
                     </tr>
                 </table>
             </div>
-            <div class="component post_message_component">
-                <h3>Post message</h3>
-                <form method="POST" action="" id="home_panel_post_message_form" onsubmit="return false">
-                    <textarea class="multiline_input" name="post_message_textarea" rows="6" form="home_panel_post_message_form"></textarea>
-                    <button class="component_button" id="post_message_button" type="submit">Post</button>
-                </form>
-            </div>
             <div class="component message_wall_component">
                 <h3>Messages</h3>
-                <button class="message_wall_refresh_button" id="home_message_wall_refresh_button">Refresh</button>
-                <div class="message_feed" id="home_panel_message_feed"></div>
-            </div>
-            <div class="component animated message_box hidden_animation" id="home_panel_message_box">
-                <p id="home_panel_message_box_text"></p>
+                <button class="message_wall_refresh_button" id="browse_message_wall_refresh_button">Refresh</button>
+                <div class="message_feed" id="browse_panel_message_feed"></div>
             </div>
         </div>
-        <div class="panel" id="browse_panel" hidden>
-            <div class="component" id="search_user_component">
-                <h3>Search User</h3>
-                <form method="POST" action="" id="search_user_form" onsubmit="return false">
-                    <div class="form_input">
-                        <label for="user_email">User email</label>
-                        <input type="email" id="user_email" name="user_email" required>
-                    </div>
-                    <button class="component_button" id="search_user_button" type="submit">Search</button>
-                </form>
-            </div>
-            <div class="component animated message_box hidden_animation" id="browse_panel_message_box">
-                <p id="browse_panel_message_box_text"></p>
-            </div>
-            <div class="animated hidden_animation" id="user_info_group">
-                <div class="component post_message_component">
-                    <h3>Post message</h3>
-                    <form method="POST" action="" id="browse_panel_post_message_form" onsubmit="return false">
-                        <textarea class="multiline_input" name="post_message_textarea" rows="6" form="browse_panel_post_message_form"></textarea>
-                        <button class="component_button" id="browse_post_message_button" type="submit">Post</button>
-                    </form>
+    </div>
+    <div class="panel" id="account_panel" hidden>
+        <div class="component">
+            <h3>Change password</h3>
+            <form method="POST" action="#" id="change_password_form" onsubmit="return false">
+                <div class="form_input">
+                    <label for="current_password_input">Current Password</label>
+                    <input type="password" id="current_password_input" name="current_password_input" minlength="6" required>
                 </div>
-                <div class="component user_info_component">
-                    <h3>Information</h3>
-                    <table>
-                        <tr>
-                            <td>First name</td>
-                            <td id="browse_panel_info_first_name"></td>
-                        </tr>
-                        <tr>
-                            <td>Family name</td>
-                            <td id="browse_panel_info_family_name"></td>
-                        </tr>
-                        <tr>
-                            <td>Gender</td>
-                            <td id="browse_panel_info_gender"></td>
-                        </tr>
-                        <tr>
-                            <td>City</td>
-                            <td id="browse_panel_info_city"></td>
-                        </tr>
-                        <tr>
-                            <td>Country</td>
-                            <td id="browse_panel_info_country"></td>
-                        </tr>
-                        <tr>
-                            <td>Email</td>
-                            <td id="browse_panel_info_email"></td>
-                        </tr>
-                    </table>
+                <div class="form_input">
+                    <label for="change_password_input">New Password</label>
+                    <input type="password" id="change_password_input" name="change_password_input" minlength="6" required>
                 </div>
-                <div class="component message_wall_component">
-                    <h3>Messages</h3>
-                    <button class="message_wall_refresh_button" id="browse_message_wall_refresh_button">Refresh</button>
-                    <div class="message_feed" id="browse_panel_message_feed"></div>
+                <div class="form_input">
+                    <label for="repeat_change_password_input">Repeat Password</label>
+                    <input type="password" id="repeat_change_password_input" name="repeat_change_password_input">
                 </div>
-            </div>
+                <button class="component_button" id="change_password_button" type="submit">Change Password</button>
+            </form>
         </div>
-        <div class="panel" id="account_panel" hidden>
-            <div class="component">
-                <h3>Change password</h3>
-                <form method="POST" action="" id="change_password_form" onsubmit="return false">
-                    <div class="form_input">
-                        <label for="current_password_input">Current Password</label>
-                        <input type="password" id="current_password_input" name="current_password_input" minlength="6" required>
-                    </div>
-                    <div class="form_input">
-                        <label for="change_password_input">New Password</label>
-                        <input type="password" id="change_password_input" name="change_password_input" minlength="6" required>
-                    </div>
-                    <div class="form_input">
-                        <label for="repeat_change_password_input">Repeat Password</label>
-                        <input type="password" id="repeat_change_password_input" name="repeat_change_password_input">
-                    </div>
-                    <button class="component_button" id="change_password_button" type="submit">Change Password</button>
-                </form>
-            </div>
-            <div class="component">
-                <button class="component_button" id="sign_out_button">Sign Out</button>
-            </div>
-            <div class="component animated message_box hidden_animation" id="account_panel_message_box">
-                <p id="account_panel_message_box_text"></p>
-            </div>
+        <div class="component">
+            <button class="component_button" id="sign_out_button">Sign Out</button>
         </div>
+        <div class="component animated message_box hidden_animation" id="account_panel_message_box">
+            <p id="account_panel_message_box_text"></p>
+        </div>
+    </div>
     </script>
 </head>
 

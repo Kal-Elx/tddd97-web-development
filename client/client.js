@@ -136,7 +136,6 @@ function changePassword(formData) {
 
     if (validatePassword(psw, repeatPsw, repeatPasswordInput)) {
         let res = serverstub.changePassword(getToken(), formData.current_password_input.value, psw);
-        console.log(res);
         if (res.success) {
             form.reset();
         }
@@ -154,20 +153,18 @@ function getUserInfo() {
 }
 
 function populateUserInfo(data, panel) {
-    let prefix = panel + "_";
-    document.getElementById(`${prefix}info_first_name`).innerText = data.firstname;
-    document.getElementById(`${prefix}info_family_name`).innerText = data.familyname;
-    document.getElementById(`${prefix}info_gender`).innerText = data.gender;
-    document.getElementById(`${prefix}info_country`).innerText = data.country;
-    document.getElementById(`${prefix}info_city`).innerText = data.city;
-    document.getElementById(`${prefix}info_email`).innerText = data.email;
+    document.getElementById(`${panel}_info_first_name`).innerText = data.firstname;
+    document.getElementById(`${panel}_info_family_name`).innerText = data.familyname;
+    document.getElementById(`${panel}_info_gender`).innerText = data.gender;
+    document.getElementById(`${panel}_info_country`).innerText = data.country;
+    document.getElementById(`${panel}_info_city`).innerText = data.city;
+    document.getElementById(`${panel}_info_email`).innerText = data.email;
 }
 
 function postMessage(formData, postToFoundUser = false) {
     let panel = postToFoundUser ? "browse_panel" : "home_panel";
     let toEmail = getUserEmail(panel);
     let res = serverstub.postMessage(getToken(), formData.post_message_textarea.value, toEmail);
-    console.log(res);
     if (res.success) {
         document.getElementById(panel + "_post_message_form").reset();
     }
