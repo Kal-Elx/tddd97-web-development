@@ -97,7 +97,7 @@ function signup(formData) {
         if (res.success) {
             handle_login(formData.signup_email.value, formData.signup_password.value);
         } else {
-            communicateToUser(res.message);
+            communicateToUser(res.message, "welcome_view");
         }
     }
 }
