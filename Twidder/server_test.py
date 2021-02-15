@@ -1,7 +1,7 @@
 import unittest
 import requests
 
-import database_helper as db
+import Twidder.database.database_helper as db
 
 # API endpoint
 URL = 'http://127.0.0.1:5000/'

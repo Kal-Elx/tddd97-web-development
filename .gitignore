@@ -1,4 +1,3 @@
 .DS_Store
-server/.venv
-server/database.db
-.vscode
+.venv
+Twidder/database/database.db

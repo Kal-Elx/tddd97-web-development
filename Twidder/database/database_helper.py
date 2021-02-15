@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 import os.path
 
-from utlis import generate_token
+from Twidder.utils import generate_token
 
 DATABASE = 'database.db'
 SCHEMA = 'schema.sql'

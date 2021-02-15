@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import jsonify, request
+from Twidder import app
 
-import database_helper as db
-
-app = Flask(__name__)
+import Twidder.database.database_helper as db
 
 
 @app.before_first_request
@@ -13,7 +12,7 @@ def init_server():
 
 @app.route('/', methods=["GET"])
 def root():
-    return jsonify({'response': 'Welcome to Twidder'}, 200)
+    return app.send_static_file('client.html')
 
 
 @app.route('/sign_up', methods=["POST"])
