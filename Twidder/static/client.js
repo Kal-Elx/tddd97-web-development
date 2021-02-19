@@ -3,6 +3,34 @@ window.onload = function () {
     displayView(signedIn);
 };
 
+/**
+ * Makes a request to the server.
+ * @param {string} url The url to send the request.
+ * @param {string} method The method in caps.
+ * @param {object} data The data that is going to be the JSON body of the request.
+ * @param {function(object)} onSuccess What to do if the request was succesful.
+ * @param {function(object)} onError  What to do if the request failed.
+ */
+function makeRequest(url, method, data, onSuccess, onError, authorization = false) {
+    let r = new XMLHttpRequest();
+    r.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            let res = JSON.parse(this.responseText)
+            if (this.status == 200) {
+                onSuccess(res.data)
+            } else {
+                onError(this.status)
+            }
+        }
+    }
+    r.open(method, url, true);
+    r.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    if (authorization) {
+        r.setRequestHeader("authorization", getToken());
+    }
+    r.send(JSON.stringify(data));
+}
+
 function getToken() {
     return localStorage.getItem("token");
 }
@@ -68,16 +96,25 @@ function login(formData) {
 }
 
 function handle_login(email, password) {
-    let res = serverstub.signIn(email, password);
-
-    if (res.success) {
-        let token = res.data;
-        localStorage.setItem("token", token);
-        document.getElementById("login_form").reset();
-        displayView(true);
-    } else {
-        communicateToUser(res.message, "welcome_view");
-    }
+    makeRequest("/sign_in", "POST", { 'email': email, 'password': password },
+        /* onSuccess */
+        function (data) {
+            let token = data.token;
+            localStorage.setItem("token", token);
+            document.getElementById("login_form").reset();
+            displayView(true);
+        },
+        function (code) {
+            switch (code) {
+                case 401:
+                    msg = "Wrong username or password."
+                    break;
+                case 400:
+                default:
+                    msg = "Application error, try again."
+            }
+            communicateToUser(msg, "welcome_view");
+        })
 }
 
 function signup(formData) {
@@ -85,20 +122,34 @@ function signup(formData) {
 
     if (validatePassword(formData.signup_password.value, formData.repeat_signup_password.value, repeatPasswordInput)) {
         repeatPasswordInput.setCustomValidity("");
-        let res = serverstub.signUp({
-            email: formData.signup_email.value,
-            password: formData.signup_password.value,
-            firstname: formData.first_name.value,
-            familyname: formData.family_name.value,
-            gender: formData.gender.value,
-            city: formData.city.value,
-            country: formData.country.value,
-        });
-        if (res.success) {
-            handle_login(formData.signup_email.value, formData.signup_password.value);
-        } else {
-            communicateToUser(res.message, "welcome_view");
-        }
+
+        makeRequest("/sign_up", "post",
+            {
+                email: formData.signup_email.value,
+                password: formData.signup_password.value,
+                firstname: formData.first_name.value,
+                familyname: formData.family_name.value,
+                gender: formData.gender.value,
+                city: formData.city.value,
+                country: formData.country.value,
+            },
+            /* onSuccess */
+            function (_) { handle_login(formData.signup_email.value, formData.signup_password.value); },
+            /* onError */
+            function (code) {
+                switch (code) {
+                    case 406:
+                        msg = "Password length must be between 6 and 50 characters."
+                        break;
+                    case 409:
+                        msg = "User already exists."
+                        break;
+                    case 400:
+                    default:
+                        msg = "Application error, try again."
+                }
+                communicateToUser(msg, "welcome_view");
+            })
     }
 }
 
@@ -123,7 +174,7 @@ function communicateToUser(msg, msg_box_prefix) {
 }
 
 function signOut() {
-    serverstub.signOut(getToken());
+    makeRequest("/sign_out", "POST", {}, function () { }, function () { }, true)
     localStorage.removeItem("token");
     displayView(false);
 }
@@ -135,21 +186,51 @@ function changePassword(formData) {
     let form = document.getElementById("change_password_form");
 
     if (validatePassword(psw, repeatPsw, repeatPasswordInput)) {
-        let res = serverstub.changePassword(getToken(), formData.current_password_input.value, psw);
-        if (res.success) {
-            form.reset();
-        }
-        communicateToUser(res.message, "account_panel");
+        makeRequest("/change_password", "POST",
+            { "oldPassword": formData.current_password_input.value, "newPassword": psw },
+            /* onSuccess */
+            function (_) {
+                form.reset();
+                communicateToUser("Password changed.", "account_panel");
+            },
+            /* onError */
+            function (code) {
+                switch (code) {
+                    case 401:
+                        msg = "Wrong password or token expired, try again."
+                        break;
+                    case 406:
+                        msg = "Password length must be between 6 and 50 characters."
+                        break;
+                    case 400:
+                    default:
+                        msg = "Application error, try again."
+                }
+                communicateToUser(msg, "account_panel");
+            },
+            true);
     }
 }
 
 function getUserInfo() {
-    let res = serverstub.getUserDataByToken(getToken());
-    if (res.success) {
-        populateUserInfo(res.data, "home_panel");
-    } else {
-        communicateToUser(res.message, "home_panel");
-    }
+    makeRequest("/get_user_data_by_token", "GET", {},
+        /* onSuccess */
+        function (data) {
+            populateUserInfo(data, "home_panel");
+        },
+        /* onError */
+        function (code) {
+            switch (code) {
+                case 401:
+                    msg = "Token expired, try again."
+                    break;
+                case 400:
+                default:
+                    msg = "Application error, try again."
+            }
+            communicateToUser(msg, "home_panel");
+        },
+        true);
 }
 
 function populateUserInfo(data, panel) {
@@ -164,21 +245,50 @@ function populateUserInfo(data, panel) {
 function postMessage(formData, postToFoundUser = false) {
     let panel = postToFoundUser ? "browse_panel" : "home_panel";
     let toEmail = getUserEmail(panel);
-    let res = serverstub.postMessage(getToken(), formData.post_message_textarea.value, toEmail);
-    if (res.success) {
-        document.getElementById(panel + "_post_message_form").reset();
-    }
-    communicateToUser(res.message, panel);
+    makeRequest("/post_message", "POST", { "message": formData.post_message_textarea.value, "email": toEmail },
+        /* onSuccess */
+        function (_) {
+            document.getElementById(panel + "_post_message_form").reset();
+            communicateToUser("Message posted.", panel);
+        },
+        /* onError */
+        function (code) {
+            switch (code) {
+                case 401:
+                    msg = "Token expired, try again."
+                    break;
+                case 406:
+                    msg = "Message was too long."
+                    break;
+                case 409:
+                    msg = "No such user."
+                    break;
+                case 400:
+                default:
+                    msg = "Application error, try again."
+            }
+            communicateToUser(msg, panel);
+        },
+        true);
 }
 
 function loadHomePanelMessageWall() {
-    let res = serverstub.getUserMessagesByToken(getToken());
-
-    if (res.success) {
-        populateMessageWall("home_panel", res.data);
-    } else {
-        communicateToUser(res.message, "home_panel");
-    }
+    makeRequest("/get_user_messages_by_token", "GET", {},
+        /* onSuccess */
+        function (data) { populateMessageWall("home_panel", data);; },
+        /* onError */
+        function (code) {
+            switch (code) {
+                case 401:
+                    msg = "Token expired, try again."
+                    break;
+                case 400:
+                default:
+                    msg = "Application error, try again."
+            }
+            communicateToUser(msg, "home_panel");
+        },
+        true);
 }
 
 function populateMessageWall(panel, data) {
@@ -190,27 +300,53 @@ function populateMessageWall(panel, data) {
 
 function searchUser(formData) {
     let email = formData.user_email.value;
-    let res = serverstub.getUserDataByEmail(getToken(), email);
-
-    if (res.success) {
-        document.getElementById("search_user_form").reset();
-        populateUserInfo(res.data, "browse_panel");
-        loadBrowsePanelMessageWall(email);
-        toggleFoundUserInfo(true);
-    } else {
-        communicateToUser(res.message, "browse_panel");
-        toggleFoundUserInfo(false);
-    }
+    makeRequest(`/get_user_data_by_email/${email}`, "GET", {},
+        /* onSuccess */
+        function (data) {
+            document.getElementById("search_user_form").reset();
+            populateUserInfo(data, "browse_panel");
+            loadBrowsePanelMessageWall(email);
+            toggleFoundUserInfo(true);
+        },
+        /* onError */
+        function (code) {
+            switch (code) {
+                case 401:
+                    msg = "Token expired, try again."
+                    break;
+                case 406:
+                    msg = "No such user."
+                    break;
+                case 400:
+                default:
+                    msg = "Application error, try again."
+            }
+            communicateToUser(msg, "browse_panel");
+            toggleFoundUserInfo(false);
+        },
+        true);
 }
 
 function loadBrowsePanelMessageWall(email) {
-    let res = serverstub.getUserMessagesByEmail(getToken(), email);
-
-    if (res.success) {
-        populateMessageWall("browse_panel", res.data);
-    } else {
-        communicateToUser(res.message, "browse_panel");
-    }
+    makeRequest(`/get_user_messages_by_email/${email}`, "GET", {},
+        /* onSuccess */
+        function (data) { populateMessageWall("browse_panel", data); },
+        /* onError */
+        function (code) {
+            switch (code) {
+                case 401:
+                    msg = "Token expired, try again."
+                    break;
+                case 406:
+                    msg = "No such user."
+                    break;
+                case 400:
+                default:
+                    msg = "Application error, try again."
+            }
+            communicateToUser(msg, "browse_panel");
+        },
+        true);
 }
 
 function toggleFoundUserInfo(show) {
