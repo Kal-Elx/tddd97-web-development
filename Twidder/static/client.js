@@ -299,7 +299,7 @@ function loadHomePanelMessageWall() {
 function populateMessageWall(panel, data) {
     let feed = document.getElementById(panel + "_message_feed");
     let messages = "";
-    data.forEach((msg) => messages += `<dt>${msg.writer}</dt><dd>${msg.content}</dd>`);
+    data.forEach((msg) => messages += `<dt>${msg.writer}</dt><dd draggable="true" ondragstart="dragMessage(event)">${msg.content}</dd>`);
     feed.innerHTML = `<dl>${messages}</dl>`;
 }
 
@@ -380,4 +380,21 @@ function setupSession() {
         // Sign out to be safe if an error occurs.
         signOut();
     };
+}
+
+// Allow drop for HTML Drag and Drop API
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+// HTML Drag and Drop API for dragging a user message from the .
+function dragMessage(ev) {
+    ev.dataTransfer.setData("text", ev.target.innerText);
+}
+
+// HTML Drag and Drop API for dropping a user message in a text field.
+function dropMessage(ev) {
+    let textfield = document.getElementById(ev.target.id);
+    textfield.value += ev.dataTransfer.getData("text");
+    ev.preventDefault();
 }

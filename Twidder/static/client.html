@@ -132,7 +132,7 @@
         <div class="component post_message_component">
             <h3>Post message</h3>
             <form method="POST" action="#" id="home_panel_post_message_form" onsubmit="return false">
-                <textarea class="multiline_input" name="post_message_textarea" rows="6" form="home_panel_post_message_form"></textarea>
+                <textarea class="multiline_input" id="post_message_textarea_home_panel" name="post_message_textarea" rows="6" form="home_panel_post_message_form" ondrop="dropMessage(event)" ondragover="allowDrop(event)"></textarea>
                 <button class="component_button" id="post_message_button" type="submit">Post</button>
             </form>
         </div>
@@ -163,7 +163,7 @@
             <div class="component post_message_component">
                 <h3>Post message</h3>
                 <form method="POST" action="#" id="browse_panel_post_message_form" onsubmit="return false">
-                    <textarea class="multiline_input" name="post_message_textarea" rows="6" form="browse_panel_post_message_form"></textarea>
+                    <textarea class="multiline_input" id="post_message_textarea_browse_panel" name="post_message_textarea" rows="6" form="browse_panel_post_message_form" ondrop="dropMessage(event)" ondragover="allowDrop(event)"></textarea>
                     <button class="component_button" id="browse_post_message_button" type="submit">Post</button>
                 </form>
             </div>
