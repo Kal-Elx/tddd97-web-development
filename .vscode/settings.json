@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": ".venv/bin/python3",
+    "python.pythonPath": "/Users/kallejohansson/development/tddd97-web-development/.venv/bin/python3",
     "python.formatting.provider": "autopep8",
     "python.testing.unittestArgs": [
         "-v",
