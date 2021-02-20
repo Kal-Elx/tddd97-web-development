@@ -82,6 +82,17 @@ def is_authorized(email, password):
                              'SELECT * FROM users WHERE email = ? AND psw = ?', email, password)
 
 
+def is_signed_in(email):
+    """ Returns whether the given user is signed in. """
+    return query_and_process(lambda res: len(res) > 0,
+                             'SELECT * FROM tokens WHERE email = ?', email)
+
+
+def get_token_by_email(email):
+    """ Returns the token of the current session for the given user. """
+    return query_and_process(lambda res: res[0][0] if res else None, 'SELECT token FROM tokens WHERE email = ?', email)
+
+
 def sign_in_user(email):
     """
     Signs in the given user and gives it a token.

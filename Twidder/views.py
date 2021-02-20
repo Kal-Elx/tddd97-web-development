@@ -1,7 +1,11 @@
 from flask import jsonify, request
+from geventwebsocket import WebSocketError
 from Twidder import app
 
 import Twidder.database.database_helper as db
+
+# Active socket sessions.
+sessions = dict()
 
 
 @app.before_first_request
@@ -55,6 +59,11 @@ def sign_in():
     elif not db.is_authorized(data['email'], data['password']):
         return jsonify({'message': 'Wrong username or password.'}), 401
 
+    if db.is_signed_in(data['email']):
+        old_token = db.get_token_by_email(data['email'])
+        sessions[old_token].send("signout")
+        terminate_user_session(old_token)
+
     token = db.sign_in_user(data['email'])
     return jsonify({'message': 'Successfully signed in.', 'data': {'token': token}}), 200
 
@@ -67,7 +76,7 @@ def sign_out():
     elif not db.token_exists(request.headers.get('authorization')):
         return jsonify({'message': 'You are not signed in.'}), 401
 
-    db.delete_token(request.headers.get('authorization'))
+    terminate_user_session(request.headers.get('authorization'))
     return jsonify({'message': 'Successfully signed out.'}), 200
 
 
@@ -169,3 +178,38 @@ def post_message():
     writer = db.get_user_by_token(request.headers.get('authorization'))
     db.post_message(writer, data['email'], data['message'])
     return jsonify({'message': 'Message posted.'}), 200
+
+
+@app.route('/new_session', methods=["GET"])
+def new_session():
+    """
+    Sets up a new session which is closed when a user signs out or signs in on
+    another browser.
+    """
+    ws = request.environ.get('wsgi.websocket')
+
+    if not ws:
+        return jsonify({'message': 'Expected WebSocket request.'}), 400
+
+    try:
+        while True:
+            # Wait for client to send token.
+            token = ws.receive()
+
+            # Store handle to session.
+            sessions[token] = ws
+
+    except WebSocketError:
+        # Do nothing. This happens when the socket is closed.
+        pass
+
+    return ''
+
+
+def terminate_user_session(token):
+    """ Handle terminating a user session. """
+    db.delete_token(token)
+
+    # Terminate the user's ongoing sessions.
+    sessions[token].close()
+    del sessions[token]

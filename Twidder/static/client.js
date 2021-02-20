@@ -45,6 +45,7 @@ function displayView(signedIn) {
         setupHomePanel();
         setupBrowsePanel();
         setupAccountPanel();
+        setupSession();
 
     } else {
         document.getElementById("viewport").innerHTML = document.getElementById("welcome_view").innerHTML;
@@ -174,7 +175,11 @@ function communicateToUser(msg, msg_box_prefix) {
 }
 
 function signOut() {
-    makeRequest("/sign_out", "POST", {}, function () { }, function () { }, true)
+    makeRequest("/sign_out", "POST", {}, function () { }, function () { }, true);
+    transitionToWelcomeView();
+}
+
+function transitionToWelcomeView() {
     localStorage.removeItem("token");
     displayView(false);
 }
@@ -356,4 +361,23 @@ function toggleFoundUserInfo(show) {
     } else {
         info.classList.add("hidden_animation");
     }
+}
+
+function setupSession() {
+    let ws = new WebSocket(`ws://${window.location.hostname}:${window.location.port}/new_session`);
+
+    ws.onopen = function () {
+        ws.send(getToken());
+    }
+
+    ws.onmessage = function (message) {
+        if (message.data == "signout") {
+            transitionToWelcomeView();
+        }
+    };
+
+    ws.onerror = function () {
+        // Sign out to be safe if an error occurs.
+        signOut();
+    };
 }
