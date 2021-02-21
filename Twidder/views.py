@@ -19,6 +19,16 @@ def root():
     return app.send_static_file('client.html')
 
 
+@app.route('/clean_db', methods=["GET"])
+def clean_db():
+    """
+    Returns the home page and resets the database.
+    NOTE: Only used for testing.
+    """
+    init_server()
+    return root()
+
+
 @app.route('/sign_up', methods=["POST"])
 def sign_up():
     """
