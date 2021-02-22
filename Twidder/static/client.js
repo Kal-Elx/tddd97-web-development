@@ -90,6 +90,38 @@ function setupAccountPanel() {
     document.getElementById("change_password_form")?.setAttribute("onsubmit", "changePassword(this); return false;");
     let repeatPasswordInput = document.getElementById("repeat_change_password_input");
     repeatPasswordInput.oninput = function () { repeatPasswordInput.setCustomValidity(""); };
+    let chartCtx = document.getElementById("live_data_chart");
+    chart = new Chart(chartCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Signed in users', 'Sent messages', 'Nationalities on Twidder'],
+            datasets: [{
+                label: 'Twidder Statistics',
+                data: [0, 0, 0,],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        maxTicksLimit: 6
+                    }
+                }]
+            }
+        }
+    });
 }
 
 function login(formData) {
@@ -373,6 +405,9 @@ function setupSession() {
     ws.onmessage = function (message) {
         if (message.data == "signout") {
             transitionToWelcomeView();
+        } else {
+            data = JSON.parse(message.data);
+            updateLiveData(data);
         }
     };
 
@@ -397,4 +432,13 @@ function dropMessage(ev) {
     let textfield = document.getElementById(ev.target.id);
     textfield.value += ev.dataTransfer.getData("text");
     ev.preventDefault();
+}
+
+/**
+ * Updates the Twidder Statistics chart.
+ * @param {list{int}} data List with three integers. 
+ */
+function updateLiveData(data) {
+    chart.data.datasets[0].data = data;
+    chart.update();
 }

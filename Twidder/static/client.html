@@ -8,6 +8,9 @@
     <link rel="shortcut icon" href="#">
     <link href="static/client.css" type="text/css" rel="stylesheet">
     <script src="static/client.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
+        integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
+        crossorigin="anonymous"></script>
     <script id="welcome_view" type="text/html"> <!-- Changed type to html to get formatting -->
     <div id="welcome_view_body">
         <img class="component" id="logo_and_slogan" src="static/resources/wimage.png"
@@ -224,6 +227,9 @@
         </div>
         <div class="component">
             <button class="component_button" id="sign_out_button">Sign Out</button>
+        </div>
+        <div class="component">
+            <canvas id="live_data_chart"></canvas>
         </div>
         <div class="component animated message_box hidden_animation" id="account_panel_message_box">
             <p id="account_panel_message_box_text"></p>

@@ -31,7 +31,7 @@ def create_db():
 
 def query(query, *args):
     """ Executes the given query. """
-    query_with_factory(lambda res: None, sqlite3.Row, query, *args)
+    query_with_factory(lambda _: None, sqlite3.Row, query, *args)
 
 
 def query_and_process(process_result, query, *args):
@@ -170,3 +170,15 @@ def post_message(writer, recipient, content):
     """ Posts the given message. """
     query('INSERT INTO messages (writer, recipient, content) VALUES (?, ?, ?)',
           writer, recipient, content)
+
+
+def get_number_of_active_users():
+    return query_and_process(lambda res: len(res), 'SELECT * FROM tokens')
+
+
+def get_number_of_sent_messages():
+    return query_and_process(lambda res: len(res), 'SELECT * FROM messages')
+
+
+def get_number_of_nationalities():
+    return query_and_process(lambda res: res[0][0], 'SELECT COUNT(DISTINCT country) FROM users')

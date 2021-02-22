@@ -1,3 +1,4 @@
+import json
 from flask import jsonify, request
 from geventwebsocket import WebSocketError
 from Twidder import app
@@ -71,10 +72,12 @@ def sign_in():
 
     if db.is_signed_in(data['email']):
         old_token = db.get_token_by_email(data['email'])
-        sessions[old_token].send("signout")
+        if old_token in sessions:
+            sessions[old_token].send("signout")
         terminate_user_session(old_token)
 
     token = db.sign_in_user(data['email'])
+    trigger_live_data_update()
     return jsonify({'message': 'Successfully signed in.', 'data': {'token': token}}), 200
 
 
@@ -87,6 +90,7 @@ def sign_out():
         return jsonify({'message': 'You are not signed in.'}), 401
 
     terminate_user_session(request.headers.get('authorization'))
+    trigger_live_data_update()
     return jsonify({'message': 'Successfully signed out.'}), 200
 
 
@@ -187,6 +191,7 @@ def post_message():
 
     writer = db.get_user_by_token(request.headers.get('authorization'))
     db.post_message(writer, data['email'], data['message'])
+    trigger_live_data_update()
     return jsonify({'message': 'Message posted.'}), 200
 
 
@@ -206,8 +211,12 @@ def new_session():
             # Wait for client to send token.
             token = ws.receive()
 
-            # Store handle to session.
-            sessions[token] = ws
+            if token is not None:
+                # Store handle to session.
+                sessions[token] = ws
+
+                # Send Twidder Statistics to newly signed in user.
+                ws.send(get_twidder_statistics())
 
     except WebSocketError:
         # Do nothing. This happens when the socket is closed.
@@ -221,5 +230,32 @@ def terminate_user_session(token):
     db.delete_token(token)
 
     # Terminate the user's ongoing sessions.
-    sessions[token].close()
-    del sessions[token]
+    if token in sessions:
+        sessions[token].close()
+
+
+def trigger_live_data_update():
+    """
+    Updates the Twidder statistics chart for all active users and removes
+    closed sockets from active sessions.
+    """
+    closed_sessions = []
+    for token, ws in sessions.items():
+        try:
+            ws.send(get_twidder_statistics())
+        except WebSocketError:
+            if ws.closed:
+                # Clean up sessions that weren't closed properly.
+                closed_sessions.append(token)
+
+    for token in closed_sessions:
+        del sessions[token]
+
+
+def get_twidder_statistics():
+    """ Returns Twidder Statistics as JSON. """
+    return json.dumps([
+        db.get_number_of_active_users(),
+        db.get_number_of_sent_messages(),
+        db.get_number_of_nationalities(),
+    ])
