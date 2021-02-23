@@ -282,31 +282,39 @@ function populateUserInfo(data, panel) {
 function postMessage(formData, postToFoundUser = false) {
     let panel = postToFoundUser ? "browse_panel" : "home_panel";
     let toEmail = getUserEmail(panel);
-    makeRequest("/post_message", "POST", { "message": formData.post_message_textarea.value, "email": toEmail },
-        /* onSuccess */
-        function (_) {
-            document.getElementById(panel + "_post_message_form").reset();
-            communicateToUser("Message posted.", panel);
-        },
-        /* onError */
-        function (code) {
-            switch (code) {
-                case 401:
-                    msg = "Token expired, try again."
-                    break;
-                case 406:
-                    msg = "Message was too long."
-                    break;
-                case 409:
-                    msg = "No such user."
-                    break;
-                case 400:
-                default:
-                    msg = "Application error, try again."
-            }
-            communicateToUser(msg, panel);
-        },
-        true);
+    navigator.geolocation.getCurrentPosition(function (position) {
+        makeRequest("/post_message", "POST",
+            {
+                "message": formData.post_message_textarea.value,
+                "email": toEmail,
+                "latitude": position.coords.latitude,
+                "longitude": position.coords.longitude,
+            },
+            /* onSuccess */
+            function (_) {
+                document.getElementById(panel + "_post_message_form").reset();
+                communicateToUser("Message posted.", panel);
+            },
+            /* onError */
+            function (code) {
+                switch (code) {
+                    case 401:
+                        msg = "Token expired, try again."
+                        break;
+                    case 406:
+                        msg = "Message was too long."
+                        break;
+                    case 409:
+                        msg = "No such user."
+                        break;
+                    case 400:
+                    default:
+                        msg = "Application error, try again."
+                }
+                communicateToUser(msg, panel);
+            },
+            true);
+    });
 }
 
 function loadHomePanelMessageWall() {
@@ -329,9 +337,10 @@ function loadHomePanelMessageWall() {
 }
 
 function populateMessageWall(panel, data) {
+    console.log(data)
     let feed = document.getElementById(panel + "_message_feed");
     let messages = "";
-    data.forEach((msg) => messages += `<dt>${msg.writer}</dt><dd draggable="true" ondragstart="dragMessage(event)">${msg.content}</dd>`);
+    data.forEach((msg) => messages += `<dt>${msg.writer} in ${msg.geolocation}</dt><dd draggable="true" ondragstart="dragMessage(event)">${msg.content}</dd>`);
     feed.innerHTML = `<dl>${messages}</dl>`;
 }
 

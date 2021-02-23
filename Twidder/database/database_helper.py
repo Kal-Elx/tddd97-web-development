@@ -166,10 +166,10 @@ def get_user_messages_by_email(email):
     return query_with_factory(lambda res: res, message_factory, 'SELECT * FROM messages WHERE recipient = ?', email)
 
 
-def post_message(writer, recipient, content):
+def post_message(writer, recipient, content, location):
     """ Posts the given message. """
-    query('INSERT INTO messages (writer, recipient, content) VALUES (?, ?, ?)',
-          writer, recipient, content)
+    query('INSERT INTO messages (writer, recipient, content, geolocation) VALUES (?, ?, ?, ?)',
+          writer, recipient, content, location)
 
 
 def get_number_of_active_users():

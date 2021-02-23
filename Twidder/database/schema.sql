@@ -27,6 +27,7 @@ CREATE TABLE messages (
 	writer VARCHAR(50),
 	recipient VARCHAR(50),
 	content VARCHAR(500),
+	geolocation VARCHAR(100),
 	FOREIGN KEY (writer) REFERENCES users(email),
 	FOREIGN KEY (recipient) REFERENCES users(email)
 );

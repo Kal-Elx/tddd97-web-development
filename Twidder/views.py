@@ -1,4 +1,7 @@
+import os
 import json
+import http.client
+import urllib.parse
 from flask import jsonify, request
 from geventwebsocket import WebSocketError
 from Twidder import app
@@ -178,9 +181,9 @@ def get_user_messages_by_email(email):
 def post_message():
     """ Posts a message on the wall of the user with the given email. """
     data = request.get_json()
-    if not ('authorization' in request.headers and 'email' in data and 'message' in data):
+    if not ('authorization' in request.headers and 'email' in data and 'message' in data and 'latitude' in data and 'longitude' in data):
         return jsonify({'message': 'Form data missing.'}), 400
-    elif not (isinstance(data['email'], str) and isinstance(data['message'], str)):
+    elif not (isinstance(data['email'], str) and isinstance(data['message'], str) and data['latitude'], str) and isinstance(data['longitude'], str):
         return jsonify({'message': 'Form data has incorrect type.'}), 400
     elif not db.token_exists(request.headers.get('authorization')):
         return jsonify({'message': 'You are not logged in.'}), 401
@@ -190,7 +193,8 @@ def post_message():
         return jsonify({'message': 'Message was too long.'}), 406
 
     writer = db.get_user_by_token(request.headers.get('authorization'))
-    db.post_message(writer, data['email'], data['message'])
+    db.post_message(writer, data['email'], data['message'], get_location(
+        data['latitude'], data['longitude']))
     trigger_live_data_update()
     return jsonify({'message': 'Message posted.'}), 200
 
@@ -259,3 +263,39 @@ def get_twidder_statistics():
         db.get_number_of_sent_messages(),
         db.get_number_of_nationalities(),
     ])
+
+
+def get_location(lat, lon):
+    API_KEY = get_geocode_api_key()
+    conn = http.client.HTTPConnection('geocode.xyz')
+
+    params = urllib.parse.urlencode({
+        'auth': API_KEY,
+        'locate': '{},{}'.format(lat, lon),
+        'region': 'SE',
+        'json': 1,
+    })
+
+    conn.request('GET', '/?{}'.format(params))
+
+    res = conn.getresponse()
+    data = res.read()
+
+    data = json.loads(data.decode('utf-8'))
+
+    res = ''
+    if 'country' in data:
+        res = data['country']
+        if 'city' in data:
+            res = '{}, {}'.format(data['city'], res)
+
+    return res if res is not None else 'Unknown location'
+
+
+def get_geocode_api_key():
+    key_path = os.path.join(os.path.dirname(
+        os.path.abspath(__file__)), '..', 'geocode_api_key.txt')
+    key = ''
+    with open(key_path) as f:
+        key = f.readlines()
+    return key

@@ -1,3 +1,4 @@
 .DS_Store
 .venv
 Twidder/database/database.db
+geocode_api_key.txt
